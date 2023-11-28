@@ -47,7 +47,7 @@ public class ReactionArticleDAO extends DAO{
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 return new ReactionArticle(rs.getInt("reaction_article_id"), 
-                        rs.getBoolean("reaction_type"), rs.getInt("user_id"), rs.getInt("user_id"));
+                        rs.getBoolean("reaction_type"), rs.getInt("user_id"), rs.getInt("article_id"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(ReactionArticleDAO.class.getName()).log(Level.SEVERE, null, ex);

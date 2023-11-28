@@ -19,7 +19,7 @@ import java.util.List;
  * @author admin
  */
 public abstract class DAO {
-    protected static Connection con ;
+    protected Connection con ;
     public DAO (){
         if(con == null){
             try{

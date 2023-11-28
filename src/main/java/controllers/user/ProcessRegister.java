@@ -79,7 +79,7 @@ public class ProcessRegister extends HttpServlet {
     private HashSet<String> check(String full_name ,String date_of_birth , String Username ,String passWord , boolean gender){
          HashSet<String> list = new HashSet<>();
         //check fullname
-        if(full_name.length() > 15 || full_name.length() < 5 )list.add("Size of Fullname is between 5 and 15") ;
+        if(full_name.length() > 100 || full_name.length() < 5 )list.add("Size of Fullname is between 5 and 100") ;
         //check username
         if(Username.length() > 15 || Username.length() < 5)list.add("Size of Username is between 5 and 15") ;
         for(Character x : Username.toCharArray()){

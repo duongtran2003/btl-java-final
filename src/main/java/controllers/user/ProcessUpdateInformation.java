@@ -34,7 +34,6 @@ import org.json.JSONObject;
 // update description
 // 
 
-
 // co 2 loai json
 /* 1 la {
     "VALID": 1
@@ -71,61 +70,78 @@ import org.json.JSONObject;
 // description_text :String
 //  đặt tên biến chuẩn như thế kia để khớp với backend
 */
-@WebServlet(name = "ProcessUpdateInformation", urlPatterns = {"/ProcessUpdateInformation"})
+@WebServlet(name = "ProcessUpdateInformation", urlPatterns = { "/ProcessUpdateInformation" })
 public class ProcessUpdateInformation extends HttpServlet {
-	private boolean checkCharacter(Character c){ // check ki tu dac biet
+    private boolean checkCharacter(Character c) { // check ki tu dac biet
         int x = c + 0;
-        if(x >= 48 && x <= 57)return true;
-        else if( x >= 65 && x <= 90)return true ;
-        else if(x >= 97 && x <= 122)return true;
-        else return false;
+        if (x >= 48 && x <= 57)
+            return true;
+        else if (x >= 65 && x <= 90)
+            return true;
+        else if (x >= 97 && x <= 122)
+            return true;
+        else
+            return false;
     }
-    private String check( String Username ){ // check ki tu dac biet va sai cu phap
-        //check username
-        if(Username.length() > 15 || Username.length() < 5)return ("Size of Fullname is between 5 and 15") ;
+
+    private String check(String Username) { // check ki tu dac biet va sai cu phap
+        // check username
+        if (Username.length() > 15 || Username.length() < 5)
+            return ("Size of Fullname is between 5 and 15");
         return "VALID";
     }
-    private String updateFullName(String full_name){
+
+    private String updateFullName(String full_name) {
         try {
-            return check(full_name);
+            if (full_name.length() > 100 || full_name.length() < 5)
+                return ("Size of Fullname is between 5 and 15");
+            return "VALID";
         } catch (Exception e) {
             return "INVALID";
         }
     }
-    private String updateDateOfBirth(String date_of_birth){
+
+    private String updateDateOfBirth(String date_of_birth) {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             formatter.setLenient(false);
             Date date = formatter.parse(date_of_birth);
-            if((new Date()).getTime() - date.getTime() < 0 )return "You are troll !";
+            if ((new Date()).getTime() - date.getTime() < 0)
+                return "You are troll !";
         } catch (Exception e) {
-            return ("The format of time is error , please type again") ;
+            return ("The format of time is error , please type again");
         }
         return "VALID";
     }
-    private String updateEmail(String email){
+
+    private String updateEmail(String email) {
         try {
-            if(!email.substring(email.length() - 10).equals("@gmail.com"))return "Email is INVALID";
-            for(int i = 0 ; i< email.length() - 10 ; i++){
-                if(!checkCharacter(email.charAt(i)))return "Email is INVALID";
+            if (!email.substring(email.length() - 10).equals("@gmail.com"))
+                return "Email is INVALID";
+            for (int i = 0; i < email.length() - 10; i++) {
+                if (!checkCharacter(email.charAt(i)))
+                    return "Email is INVALID";
             }
         } catch (Exception e) {
             return "Email is INVALID";
         }
         return "VALID";
     }
-    private String updatePhoneNumber(String PhoneNumber){
+
+    private String updatePhoneNumber(String PhoneNumber) {
         try {
-            for(Character x : PhoneNumber.toCharArray()){
-                if(!Character.isDigit(x))return "PhoneNumber is INVALID" ; 
+            for (Character x : PhoneNumber.toCharArray()) {
+                if (!Character.isDigit(x))
+                    return "PhoneNumber is INVALID";
             }
         } catch (Exception e) {
-            return "PhoneNumber is INVALID" ;
+            return "PhoneNumber is INVALID";
         }
         return "VALID";
     }
+
     @Override
-   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String method = req.getMethod();
         if (method.equals("PATCH")) {
             this.doPatch(req, resp);
@@ -133,8 +149,9 @@ public class ProcessUpdateInformation extends HttpServlet {
             super.service(req, resp);
         }
     }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -150,15 +167,15 @@ public class ProcessUpdateInformation extends HttpServlet {
             // lay ra cac du lieu
             JSONObject yourdata = new JSONObject(json.toString());
             // lay ra user_id
-            int user_id = yourdata.getInt("user_id") ;
+            int user_id = yourdata.getInt("user_id");
             // lay ra User tu database
-            User yen = (User)(new UserDAO()).getById(user_id);
+            User yen = (User) (new UserDAO()).getById(user_id);
             // process
             String s1 = updateFullName(yourdata.getString("full_name").trim());
             String s2 = updateDateOfBirth(yourdata.getString("date_of_birth").trim());
             String s4 = updateEmail(yourdata.getString("email").trim());
             String s5 = updatePhoneNumber(yourdata.getString("phone_number").trim());
-            if(s1.equals("VALID") && s2.equals("VALID") &&  s4.equals("VALID") && s5.equals("VALID") ){
+            if (s1.equals("VALID") && s2.equals("VALID") && s4.equals("VALID") && s5.equals("VALID")) {
                 // update database
                 UserDAO config1 = new UserDAO();
                 EmailDAO config2 = new EmailDAO();
@@ -167,72 +184,79 @@ public class ProcessUpdateInformation extends HttpServlet {
                 yen.setDate_of_birth(yourdata.getString("date_of_birth").trim());
                 yen.setAvatar_image_path(yourdata.getString("avatar_image_path").trim());
                 yen.setFavor_fc(yourdata.getString("favor_fc").trim());
-                //set address
+                // set address
                 yen.setUser_role(yourdata.getInt("user_role"));
                 yen.setScore_to_award(yourdata.getInt("score_to_award"));
                 yen.setCountry(yourdata.getString("country").trim());
                 yen.setCity(yourdata.getString("city").trim());
                 yen.setDistrict(yourdata.getString("district").trim());
                 yen.setDetail_position(yourdata.getString("detail_position").trim());
-                //set description
+                // set description
                 yen.setDescription_text(yourdata.getString("description_text").trim());
                 yen.setGender(yourdata.getBoolean("gender"));
-                //set Phone
+                // set Phone
                 try {
                     List<Object> list = config3.getAllObjects(user_id);
-                    PhoneNumber client = (PhoneNumber)list.get(0) ;
+                    PhoneNumber client = (PhoneNumber) list.get(0);
                     client.setPhone_number(yourdata.getString("phone_number"));
                     boolean bool = config3.updateObject(client);
                 } catch (Exception e) {
-                    PhoneNumber guest = new PhoneNumber(1, user_id, yourdata.getString("phone_number")) ;
-                    config3.addObject(guest) ;
+                    PhoneNumber guest = new PhoneNumber(1, user_id, yourdata.getString("phone_number"));
+                    config3.addObject(guest);
                 }
-                //set Email
+                // set Email
                 try {
                     List<Object> list = config2.getAllObjects(user_id);
-                    Email client = (Email)list.get(0) ;
+                    Email client = (Email) list.get(0);
                     client.setEmail(yourdata.getString("email"));
                     boolean bool = config2.updateObject(client);
                 } catch (Exception e) {
-                    Email guest = new Email(1, user_id, yourdata.getString("email")) ;
-                    config2.addObject(guest) ;
+                    Email guest = new Email(1, user_id, yourdata.getString("email"));
+                    config2.addObject(guest);
                 }
-                // update database 
-                config1.updateObject((Object)yen);
+                // update database
+                config1.updateObject((Object) yen);
                 // nem message
-                response.getWriter().write("{\"VALID\" : 1}") ;
-            }
-            else {
-                String a1 = "\"Size of Fullname is between 5 and 15\" : 0," ;
-                String a2 = "\"VALID\" : 0," ;
-                String a3 = "\"The format of time is error , please type again\" : 0," ;
-                String a4 = "\"You are troll !\" : 0," ;
-                String a5 = "\"Email is INVALID\" : 0," ;
-                String a6 = "\"PhoneNumber is INVALID\" : 0," ;
-                if(!s1.equals("VALID"))a1 = "\"Size of Fullname is between 5 and 15\" : 1," ;
-                if(!s2.equals("VALID"))a3 = "\"The format of time is error , please type again\" : 1," ;
-                if(!s4.equals("VALID"))a5 = "\"Email is INVALID\" : 1," ;
-                if(!s5.equals("VALID"))a6 = "\"PhoneNumber is INVALID\" : 1" ;
-                response.getWriter().write("{" + a1 + a2 + a3 + a5 + a6 + "}" );
+                response.getWriter().write("{\"VALID\" : 1}");
+            } else {
+                String a1 = "\"Size of Fullname is between 5 and 15\" : 0,";
+                String a2 = "\"VALID\" : 0,";
+                String a3 = "\"The format of time is error , please type again\" : 0,";
+                String a4 = "\"You are troll !\" : 0,";
+                String a5 = "\"Email is INVALID\" : 0,";
+                String a6 = "\"PhoneNumber is INVALID\" : 0,";
+                if (!s1.equals("VALID"))
+                    a1 = "\"Size of Fullname is between 5 and 15\" : 1,";
+                if (!s2.equals("VALID"))
+                    a3 = "\"The format of time is error , please type again\" : 1,";
+                if (!s4.equals("VALID"))
+                    a5 = "\"Email is INVALID\" : 1,";
+                if (!s5.equals("VALID"))
+                    a6 = "\"PhoneNumber is INVALID\" : 1";
+                response.getWriter().write("{" + a1 + a2 + a3 + a5 + a6 + "}");
             }
         } catch (Exception e) {
             response.getWriter().write(e.toString());
         }
-    } 
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
+
     protected void doPatch(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
+
     @Override
     public String getServletInfo() {
         return "Short description";
