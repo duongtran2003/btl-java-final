@@ -135,15 +135,14 @@ public class OrderDAO extends DAO{
         }
     }
 
-
     @Override
     public boolean deleteObject(int objectId) {
         try {
             String sql = "delete from orders where order_id = " + objectId;
-            PreparedStatement st = con.prepareStatement(sql);
-            st.executeUpdate();
             ProductOrderDAO prodOrderDAO = new ProductOrderDAO();
             prodOrderDAO.deleteByOrderId(objectId);
+            PreparedStatement st = con.prepareStatement(sql);
+            st.executeUpdate();
             return true;
         } catch (SQLException e) {
 //            System.out.println(e);

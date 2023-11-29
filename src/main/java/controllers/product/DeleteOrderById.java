@@ -61,7 +61,7 @@ public class DeleteOrderById extends HttpServlet {
 			// 	}
 			// }
 			int _id = Integer.parseInt(id);
-			orderDao.deleteObject(_id);
+			boolean flag = orderDao.deleteObject(_id);
 			res.put("message", "success");
 			JSONHelper.sendJsonAsResponse(response, 200, res);
 			return;
